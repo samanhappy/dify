@@ -466,6 +466,7 @@ ORDER BY m.created_at;
 
 ```sql
 -- 统计点赞/点踩比例
+-- 使用窗口函数计算每个应用中各评级类型的百分比
 SELECT 
     app_id,
     rating,
@@ -537,7 +538,7 @@ GROUP BY app_id;
 ### 6. 用户活跃度统计
 
 ```sql
--- 统计活跃用户数（最近7天）
+-- 统计活跃用户数（最近7天，可根据需要调整天数）
 SELECT 
     app_id,
     COUNT(DISTINCT from_end_user_id) as active_users
