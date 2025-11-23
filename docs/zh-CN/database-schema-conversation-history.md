@@ -424,6 +424,8 @@ apps (应用表)
 
 ## 数据统计应用场景
 
+> **注意**: 以下 SQL 示例使用 PostgreSQL 语法。Dify 主要支持 PostgreSQL 数据库。
+
 ### 1. 对话次数统计
 
 ```sql
@@ -468,7 +470,7 @@ SELECT
     app_id,
     rating,
     COUNT(*) as count,
-    COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY app_id) as percentage
+    ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY app_id), 2) as percentage
 FROM message_feedbacks
 GROUP BY app_id, rating;
 
@@ -535,12 +537,12 @@ GROUP BY app_id;
 ### 6. 用户活跃度统计
 
 ```sql
--- 统计活跃用户数
+-- 统计活跃用户数（最近7天）
 SELECT 
     app_id,
     COUNT(DISTINCT from_end_user_id) as active_users
 FROM conversations
-WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+WHERE created_at >= NOW() - INTERVAL '7 days'
 GROUP BY app_id;
 
 -- 统计用户对话频率
