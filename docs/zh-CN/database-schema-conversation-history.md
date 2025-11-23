@@ -438,7 +438,7 @@ GROUP BY app_id;
 -- 统计时间段内的对话数
 SELECT DATE(created_at) as date, COUNT(*) as count
 FROM conversations
-WHERE app_id = 'xxx' AND created_at >= '2024-01-01'
+WHERE app_id = '{app_id}' AND created_at >= '{start_date}'
 GROUP BY DATE(created_at);
 ```
 
@@ -458,7 +458,7 @@ SELECT
     m.answer as answer,
     m.created_at
 FROM messages m
-WHERE m.conversation_id = 'xxx'
+WHERE m.conversation_id = '{conversation_id}'
 ORDER BY m.created_at;
 ```
 
@@ -481,7 +481,7 @@ SELECT
     rating,
     COUNT(*) as count
 FROM message_feedbacks
-WHERE app_id = 'xxx' AND created_at >= '2024-01-01'
+WHERE app_id = '{app_id}' AND created_at >= '{start_date}'
 GROUP BY DATE(created_at), rating;
 ```
 
@@ -504,7 +504,7 @@ SELECT
     content,
     hit_count
 FROM message_annotations
-WHERE app_id = 'xxx'
+WHERE app_id = '{app_id}'
 ORDER BY hit_count DESC
 LIMIT 10;
 ```
@@ -521,7 +521,7 @@ SELECT
     SUM(message_tokens + answer_tokens) as total_tokens,
     SUM(total_price) as total_cost
 FROM messages
-WHERE created_at >= '2024-01-01'
+WHERE created_at >= '{start_date}'
 GROUP BY app_id;
 
 -- 统计平均响应时间
@@ -552,7 +552,7 @@ SELECT
     COUNT(*) as conversation_count,
     COUNT(DISTINCT DATE(created_at)) as active_days
 FROM conversations
-WHERE app_id = 'xxx'
+WHERE app_id = '{app_id}'
 GROUP BY from_end_user_id
 ORDER BY conversation_count DESC;
 ```
