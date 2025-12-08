@@ -92,7 +92,7 @@ class TestToolProviderListCache:
         ToolProviderListCache.invalidate_cache(tenant_id)
         
         # Should delete all known cache types instead of using scan_iter
-        cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+        cache_types = ["all", "builtin", "api", "workflow", "mcp"]
         expected_keys = [
             ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
             for cache_type in cache_types
@@ -106,7 +106,7 @@ class TestToolProviderListCache:
         ToolProviderListCache.invalidate_cache(tenant_id)
         
         # Should still call delete with known cache types
-        cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+        cache_types = ["all", "builtin", "api", "workflow", "mcp"]
         expected_keys = [
             ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
             for cache_type in cache_types

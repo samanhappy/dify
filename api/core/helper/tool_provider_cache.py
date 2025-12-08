@@ -51,7 +51,7 @@ class ToolProviderListCache:
         else:
             # Invalidate all common cache types for this tenant
             # Instead of using scan_iter which can be slow, delete known cache keys
-            cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+            cache_types = ["all", "builtin", "api", "workflow", "mcp"]
             keys_to_delete = [
                 ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
                 for cache_type in cache_types
