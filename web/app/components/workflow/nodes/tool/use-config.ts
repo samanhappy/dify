@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { produce } from 'immer'
 import { useBoolean } from 'ahooks'
-import { useWorkflowStore } from '../../store'
+import { useWorkflowStore, useStore } from '../../store'
 import type { ToolNodeType, ToolVarInputs } from './types'
 import { useLanguage } from '@/app/components/header/account-setting/model-provider-page/hooks'
 import useNodeCrud from '@/app/components/workflow/nodes/_base/hooks/use-node-crud'
@@ -48,10 +48,24 @@ const useConfig = (id: string, payload: ToolNodeType) => {
     tool_parameters,
   } = inputs
   const isBuiltIn = provider_type === CollectionType.builtIn
-  const { data: buildInTools } = useAllBuiltInTools()
-  const { data: customTools } = useAllCustomTools()
-  const { data: workflowTools } = useAllWorkflowTools()
-  const { data: mcpTools } = useAllMCPTools()
+  
+  // Prioritize using store data to avoid redundant subscriptions
+  const storeBuildInTools = useStore(s => s.buildInTools)
+  const storeCustomTools = useStore(s => s.customTools)
+  const storeWorkflowTools = useStore(s => s.workflowTools)
+  const storeMcpTools = useStore(s => s.mcpTools)
+  
+  // Fallback to hooks only if store data is not available
+  const { data: hookBuildInTools } = useAllBuiltInTools()
+  const { data: hookCustomTools } = useAllCustomTools()
+  const { data: hookWorkflowTools } = useAllWorkflowTools()
+  const { data: hookMcpTools } = useAllMCPTools()
+  
+  // Use store data first, fallback to hook data
+  const buildInTools = storeBuildInTools ?? hookBuildInTools
+  const customTools = storeCustomTools ?? hookCustomTools
+  const workflowTools = storeWorkflowTools ?? hookWorkflowTools
+  const mcpTools = storeMcpTools ?? hookMcpTools
 
   const currentTools = useMemo(() => {
     switch (provider_type) {
