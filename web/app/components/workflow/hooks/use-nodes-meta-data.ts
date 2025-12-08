@@ -26,9 +26,22 @@ export const useNodesMetaData = () => {
 
 export const useNodeMetaData = (node: Node) => {
   const language = useGetLanguage()
-  const { data: buildInTools } = useAllBuiltInTools()
-  const { data: customTools } = useAllCustomTools()
-  const { data: workflowTools } = useAllWorkflowTools()
+  
+  // Prioritize using store data to avoid redundant subscriptions
+  const storeBuildInTools = useStore(s => s.buildInTools)
+  const storeCustomTools = useStore(s => s.customTools)
+  const storeWorkflowTools = useStore(s => s.workflowTools)
+  
+  // Fallback to hooks only if store data is not available
+  const { data: hookBuildInTools } = useAllBuiltInTools()
+  const { data: hookCustomTools } = useAllCustomTools()
+  const { data: hookWorkflowTools } = useAllWorkflowTools()
+  
+  // Use store data first, fallback to hook data
+  const buildInTools = storeBuildInTools ?? hookBuildInTools
+  const customTools = storeCustomTools ?? hookCustomTools
+  const workflowTools = storeWorkflowTools ?? hookWorkflowTools
+  
   const dataSourceList = useStore(s => s.dataSourceList)
   const availableNodesMetaData = useNodesMetaData()
   const { data } = node

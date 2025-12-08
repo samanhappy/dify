@@ -321,6 +321,17 @@ export const Workflow: FC<WorkflowProps> = memo(({
   const { data: workflowTools } = useAllWorkflowTools()
   const { data: mcpTools } = useAllMCPTools()
   const dataSourceList = useStore(s => s.dataSourceList)
+  
+  // Populate workflow store with tool data to avoid redundant fetches in child components
+  useEffect(() => {
+    workflowStore.setState({
+      buildInTools,
+      customTools,
+      workflowTools,
+      mcpTools,
+    })
+  }, [buildInTools, customTools, workflowTools, mcpTools, workflowStore])
+  
   // buildInTools, customTools, workflowTools, mcpTools, dataSourceList
   const configsMap = useHooksStore(s => s.configsMap)
   const [isLoadedVars, setIsLoadedVars] = useState(false)

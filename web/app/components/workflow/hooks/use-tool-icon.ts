@@ -52,11 +52,25 @@ const findTriggerPluginIcon = (
 }
 
 export const useToolIcon = (data?: Node['data']) => {
-  const { data: buildInTools } = useAllBuiltInTools()
-  const { data: customTools } = useAllCustomTools()
-  const { data: workflowTools } = useAllWorkflowTools()
-  const { data: mcpTools } = useAllMCPTools()
+  // Prioritize using store data to avoid redundant subscriptions
+  const storeBuildInTools = useStore(s => s.buildInTools)
+  const storeCustomTools = useStore(s => s.customTools)
+  const storeWorkflowTools = useStore(s => s.workflowTools)
+  const storeMcpTools = useStore(s => s.mcpTools)
   const dataSourceList = useStore(s => s.dataSourceList)
+  
+  // Fallback to hooks only if store data is not available
+  const { data: hookBuildInTools } = useAllBuiltInTools()
+  const { data: hookCustomTools } = useAllCustomTools()
+  const { data: hookWorkflowTools } = useAllWorkflowTools()
+  const { data: hookMcpTools } = useAllMCPTools()
+  
+  // Use store data first, fallback to hook data
+  const buildInTools = storeBuildInTools ?? hookBuildInTools
+  const customTools = storeCustomTools ?? hookCustomTools
+  const workflowTools = storeWorkflowTools ?? hookWorkflowTools
+  const mcpTools = storeMcpTools ?? hookMcpTools
+  
   const { data: triggerPlugins } = useAllTriggerPlugins()
   const { theme } = useTheme()
 
@@ -140,10 +154,24 @@ export const useToolIcon = (data?: Node['data']) => {
 }
 
 export const useGetToolIcon = () => {
-  const { data: buildInTools } = useAllBuiltInTools()
-  const { data: customTools } = useAllCustomTools()
-  const { data: workflowTools } = useAllWorkflowTools()
-  const { data: mcpTools } = useAllMCPTools()
+  // Prioritize using store data to avoid redundant subscriptions
+  const storeBuildInTools = useStore(s => s.buildInTools)
+  const storeCustomTools = useStore(s => s.customTools)
+  const storeWorkflowTools = useStore(s => s.workflowTools)
+  const storeMcpTools = useStore(s => s.mcpTools)
+  
+  // Fallback to hooks only if store data is not available
+  const { data: hookBuildInTools } = useAllBuiltInTools()
+  const { data: hookCustomTools } = useAllCustomTools()
+  const { data: hookWorkflowTools } = useAllWorkflowTools()
+  const { data: hookMcpTools } = useAllMCPTools()
+  
+  // Use store data first, fallback to hook data
+  const buildInTools = storeBuildInTools ?? hookBuildInTools
+  const customTools = storeCustomTools ?? hookCustomTools
+  const workflowTools = storeWorkflowTools ?? hookWorkflowTools
+  const mcpTools = storeMcpTools ?? hookMcpTools
+  
   const { data: triggerPlugins } = useAllTriggerPlugins()
   const workflowStore = useWorkflowStore()
   const { theme } = useTheme()
