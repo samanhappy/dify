@@ -49,8 +49,11 @@ class ToolProviderListCache:
             cache_key = ToolProviderListCache._generate_cache_key(tenant_id, typ)
             redis_client.delete(cache_key)
         else:
-            # Invalidate all caches for this tenant
-            pattern = f"tool_providers:tenant_id:{tenant_id}:*"
-            keys = list(redis_client.scan_iter(pattern))
-            if keys:
-                redis_client.delete(*keys)
+            # Invalidate all common cache types for this tenant
+            # Instead of using scan_iter which can be slow, delete known cache keys
+            cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+            keys_to_delete = [
+                ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
+                for cache_type in cache_types
+            ]
+            redis_client.delete(*keys_to_delete)

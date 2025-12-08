@@ -111,3 +111,13 @@ class RedisConfig(BaseSettings):
         description="Enable client side cache in redis",
         default=False,
     )
+
+    REDIS_SOCKET_TIMEOUT: PositiveFloat | None = Field(
+        description="Socket timeout in seconds for Redis operations",
+        default=5.0,
+    )
+
+    REDIS_SOCKET_CONNECT_TIMEOUT: PositiveFloat | None = Field(
+        description="Socket connection timeout in seconds for Redis",
+        default=5.0,
+    )

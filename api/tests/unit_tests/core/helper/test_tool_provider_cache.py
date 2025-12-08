@@ -88,25 +88,30 @@ class TestToolProviderListCache:
     def test_invalidate_cache_all_types(self, mock_redis_client):
         """Test invalidate cache - clear all tenant cache"""
         tenant_id = "tenant_123"
-        mock_keys = [
-            b"tool_providers:tenant_id:tenant_123:type:all",
-            b"tool_providers:tenant_id:tenant_123:type:builtin",
-        ]
-        mock_redis_client.scan_iter.return_value = mock_keys
-
+        
         ToolProviderListCache.invalidate_cache(tenant_id)
-
-        mock_redis_client.scan_iter.assert_called_once_with(f"tool_providers:tenant_id:{tenant_id}:*")
-        mock_redis_client.delete.assert_called_once_with(*mock_keys)
+        
+        # Should delete all known cache types instead of using scan_iter
+        cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+        expected_keys = [
+            ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
+            for cache_type in cache_types
+        ]
+        mock_redis_client.delete.assert_called_once_with(*expected_keys)
 
     def test_invalidate_cache_no_keys(self, mock_redis_client):
-        """Test invalidate cache - no cache keys for tenant"""
+        """Test invalidate cache - no cache keys for tenant (now always deletes known types)"""
         tenant_id = "tenant_123"
-        mock_redis_client.scan_iter.return_value = []
-
+        
         ToolProviderListCache.invalidate_cache(tenant_id)
-
-        mock_redis_client.delete.assert_not_called()
+        
+        # Should still call delete with known cache types
+        cache_types = ["all", "builtin", "model", "api", "workflow", "mcp"]
+        expected_keys = [
+            ToolProviderListCache._generate_cache_key(tenant_id, cache_type) 
+            for cache_type in cache_types
+        ]
+        mock_redis_client.delete.assert_called_once_with(*expected_keys)
 
     def test_redis_fallback_default_return(self, mock_redis_client):
         """Test redis_fallback decorator - default return value (Redis error)"""

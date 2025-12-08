@@ -161,6 +161,8 @@ def _get_base_redis_params() -> dict[str, Any]:
         "decode_responses": False,
         "protocol": dify_config.REDIS_SERIALIZATION_PROTOCOL,
         "cache_config": _get_cache_configuration(),
+        "socket_timeout": dify_config.REDIS_SOCKET_TIMEOUT,
+        "socket_connect_timeout": dify_config.REDIS_SOCKET_CONNECT_TIMEOUT,
     }
 
 
@@ -202,6 +204,8 @@ def _create_cluster_client() -> Union[redis.Redis, RedisCluster]:
         password=dify_config.REDIS_CLUSTERS_PASSWORD,
         protocol=dify_config.REDIS_SERIALIZATION_PROTOCOL,
         cache_config=_get_cache_configuration(),
+        socket_timeout=dify_config.REDIS_SOCKET_TIMEOUT,
+        socket_connect_timeout=dify_config.REDIS_SOCKET_CONNECT_TIMEOUT,
     )
     return cluster
 
