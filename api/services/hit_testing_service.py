@@ -144,7 +144,7 @@ class HitTestingService:
             "query": {
                 "content": query,
             },
-            "records": [record.model_dump() for record in records],
+            "records": records,
         }
 
     @classmethod
