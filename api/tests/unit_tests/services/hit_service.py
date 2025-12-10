@@ -551,8 +551,8 @@ class TestHitTestingServiceCompactRetrieveResponse:
             # Assert
             assert result["query"]["content"] == query
             assert len(result["records"]) == 2
-            assert result["records"][0]["content"] == "Doc 1"
-            assert result["records"][0]["score"] == 0.95
+            # Records are now RetrievalSegments objects, not dicts
+            assert result["records"] == mock_records
             mock_format.assert_called_once_with(documents)
 
     def test_compact_retrieve_response_empty_documents(self):
